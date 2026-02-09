@@ -47,19 +47,20 @@ col1.metric("Current Price", f"${filtered_df['Price'].iloc[-1]:.2f}")
 col2.metric("Max Price", f"${filtered_df['Price'].max():.2f}")
 col3.metric("Min Price", f"${filtered_df['Price'].min():.2f}")
 
-# Events Section (Placeholder for now)
-st.subheader("Significant Events")
-events = {
-    "1990-08-02": "Iraq invades Kuwait",
-    "2008-07-11": "Global Financial Crisis Peak",
-    "2014-06-19": "Oil Price Crash Starts",
-    "2020-04-20": "COVID-19 Negative Prices (WTI context)",
-    "2022-02-24": "Russia invades Ukraine"
-}
+# Events Section
+st.subheader("Significant Market Events")
 
-st.table(pd.DataFrame(list(events.items()), columns=["Date", "Event"]))
+@st.cache_data
+def load_events():
+    events_path = "data/external/major_events.csv"
+    if os.path.exists(events_path):
+        return pd.read_csv(events_path)
+    return pd.DataFrame(columns=["Date", "Event", "Category"])
 
-# Model Insights (Placeholder)
+events_df = load_events()
+st.dataframe(events_df, use_container_width=True)
+
+# Model Insights
 st.subheader("Statistical Model Insights")
-st.info("The Bayesian Change Point model detects shifts in price regimes. Below are the detected change points for the selected period.")
+st.info("The Bayesian Change Point model detects shifts in price regimes. Below are the detected change points for the 2018-2022 period.")
 st.image("notebooks/model_trace_multi.png")
