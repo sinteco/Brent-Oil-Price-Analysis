@@ -1,51 +1,63 @@
 # Brent Oil Price Analysis
 
-This project analyzes historical Brent oil prices (1987-2022) to identify structural breaks and quantify the impact of significant geopolitical and economic events using Bayesian Statistical Modeling.
+A comprehensive investigation into the structural dynamics of Brent Crude Oil pricing (1987–2026). This project combines Bayesian statistical modeling with interactive visualization to identify regime shifts and quantify the economic impact of major geopolitical and economic events.
 
 ## 🚀 Key Features
 
-- **Bayesian Change Point Modeling**: Using PyMC to detect shifts in price mean and volatility.
-- **Structural Break Analysis**: Quantitative impact analysis of events like the 1990 Kuwait Invasion, 2008 Financial Crisis, and 2020 COVID-19 pandemic.
+- **Bayesian Change Point Modeling**: PyMC-based detection of price regime shifts with full posterior uncertainty quantification for breakpoint locations, regime means, and volatility.
+- **15 Validated Market Shock Events**: A curated chronology of conflicts, OPEC policy shifts, sanctions, and economic crises used as independent validation markers.
+- **Robust Data Pipeline**: All scripts include input validation, convergence diagnostics (R-hat, ESS), and structured error handling.
 - **Interactive Dashboards**:
-  - **Streamlit**: Fast, data-centric dashboard for research exploration.
-  - **Flask + React**: Full-stack analytical application with interactive Recharts visualizations and event highlighting.
+  - **Streamlit**: Lightweight, data-centric dashboard for research exploration.
+  - **Flask + React**: Full-stack analytical application with Recharts visualizations and event highlighting.
 
 ## 📁 Project Structure
 
 ```text
+├── WORKFLOW.md             # Analysis workflow, assumptions & limitations
 ├── dashboard/              # Streamlit dashboard
-├── flask_api/             # Flask Backend API
-├── react_ui/              # React Frontend (Vite)
-├── src/                   # Analysis & Modeling scripts
-├── notebooks/             # Exploratory Data Analysis & Plots
+├── flask_api/              # Flask Backend API
+│   └── API_DOCS.md         # API endpoint documentation
+├── react_ui/               # React Frontend (Vite + Recharts)
+├── src/
+│   ├── data_preprocessing.py   # Step 2: Cleaning & validation
+│   ├── analyze_properties.py   # Step 3: EDA (ADF, volatility)
+│   ├── generate_visuals.py     # Step 5: Event-annotated plots
+│   ├── model.py                # Step 6: Bayesian Change Point model
+│   ├── task2_model.py          # Task 2: Focused structural break model
+│   └── impact_quantifier.py    # Regime impact quantification
+├── notebooks/              # Generated plots & analysis artifacts
 ├── data/
-│   ├── raw/               # Raw Brent prices (FRED)
-│   ├── processed/         # Cleaned data & model results
-│   └── external/          # Historical events dataset
-└── tests/                 # Unit tests
+│   ├── raw/                # Raw Brent prices (FRED)
+│   ├── processed/          # Cleaned data & model results
+│   └── external/           # Historical events dataset (15 events)
+└── tests/                  # Unit tests
 ```
 
 ## 🛠️ Installation & Setup
 
-### 1. Backend (Python)
+### 1. Python Environment
 ```bash
-# Install dependencies
-pip install pymc arviz pandas matplotlib seaborn flask flask-cors
+pip install pymc arviz pandas matplotlib seaborn flask flask-cors statsmodels numpy
 ```
 
-### 2. Frontend (React)
+### 2. React Frontend
 ```bash
-cd react_ui
-npm install
+cd react_ui && npm install
 ```
 
 ## 🏃 Running the Project
 
-### Analysis & Modeling
-To run the Bayesian analysis:
+### Analysis Pipeline (Sequential)
 ```bash
+# Step 2: Preprocess raw data
+python src/data_preprocessing.py
+
+# Step 3: Run EDA (ADF test, volatility analysis)
+python src/analyze_properties.py
+
+# Step 6: Bayesian Change Point model
 python src/model.py
-python src/impact_quantifier.py
 ```
 
 ### Interactive Dashboards
@@ -57,19 +69,34 @@ streamlit run dashboard/app.py
 
 #### Full-Stack (Flask + React)
 ```bash
-# Start Flask API (Port 5001)
+# Terminal 1: Start Flask API (Port 5001)
 python flask_api/main.py
 
-# In another terminal, start React Dev Server (Port 3000)
-cd react_ui
-npm run dev
+# Terminal 2: Start React Dev Server (Port 3000)
+cd react_ui && npm run dev
 ```
 
-## 📊 Results Summary
-The analysis identified a massive 287% volatility spike and a 41% price drop during the 2020 COVID-19 regime. Recent structural breaks (July 2021) align with the global energy supply constraints, resulting in a 60% increase in average price levels.
+## 📊 Key Results
+
+| Finding | Value |
+|---------|-------|
+| Detected Change Point | July 27, 2021 |
+| Pre-Break Mean Price | $57.77 |
+| Post-Break Mean Price | $92.52 |
+| Net Price Increase | **+60.16%** |
+| COVID-19 Volatility Spike | **+287%** |
+| Post-Break Volatility Change | **-73%** |
+
+## 📄 Documentation
+
+- **[WORKFLOW.md](WORKFLOW.md)**: Detailed 6-step analysis workflow, 7 key assumptions, 5 known limitations, and expected model outputs.
+- **[flask_api/API_DOCS.md](flask_api/API_DOCS.md)**: REST API endpoint reference.
 
 ## 🌿 Branch Overview
-- `main`: Final project state.
-- `task1`: Analysis foundation and data acquisition.
-- `task2`: Bayesian change point modeling and impact quantification.
-- `task3`: Full-stack dashboard implementation.
+
+| Branch | Content |
+|--------|---------|
+| `main` | Final consolidated project state |
+| `task1` | Data acquisition, EDA, event research, and workflow documentation |
+| `task2` | Bayesian change point modeling and impact quantification |
+| `task3` | Full-stack Flask + React dashboard implementation |
